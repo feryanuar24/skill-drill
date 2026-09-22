@@ -10,6 +10,7 @@ import com.example.skilldrill.data.model.RegisterResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 sealed class AuthState {
     object Idle : AuthState()
@@ -48,8 +49,9 @@ class AuthViewModel : ViewModel() {
                         _authState.value = AuthState.Error(loginResponse.message)
                     }
                 } else {
-                    val errorMsg = response.errorBody()?.string() ?: response.message()
-                    _authState.value = AuthState.Error("Login failed: ${response.code()} $errorMsg")
+                    val errorJson = response.errorBody()?.string()
+                    val errorMessage = parseErrorMessage(errorJson) ?: response.message()
+                    _authState.value = AuthState.Error(errorMessage)
                 }
             } catch (e: Exception) {
                 _authState.value = AuthState.Error("Network error: ${e.localizedMessage}")
@@ -73,8 +75,9 @@ class AuthViewModel : ViewModel() {
                         _registerState.value = RegisterState.Error(registerResponse.message)
                     }
                 } else {
-                    val errorMsg = response.errorBody()?.string() ?: response.message()
-                    _registerState.value = RegisterState.Error("Register failed: ${response.code()} $errorMsg")
+                    val errorJson = response.errorBody()?.string()
+                    val errorMessage = parseErrorMessage(errorJson) ?: response.message()
+                    _registerState.value = RegisterState.Error(errorMessage)
                 }
             } catch (e: Exception) {
                 _registerState.value = RegisterState.Error("Network error: ${e.localizedMessage}")
@@ -86,5 +89,20 @@ class AuthViewModel : ViewModel() {
         _authState.value = AuthState.Idle
         _registerState.value = RegisterState.Idle
     }
+
+    private fun parseErrorMessage(errorJson: String?): String? {
+        if (errorJson.isNullOrBlank()) return null
+        return try {
+            val jsonObject = JSONObject(errorJson)
+            if (jsonObject.has("message")) {
+                jsonObject.getString("message")
+            } else {
+                null
+            }
+        } catch (_: Exception) {
+            null
+        }
+    }
 }
+
 
