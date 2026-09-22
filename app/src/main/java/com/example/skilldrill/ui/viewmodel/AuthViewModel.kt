@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.skilldrill.data.api.RetrofitClient
 import com.example.skilldrill.data.model.LoginRequest
 import com.example.skilldrill.data.model.LoginResponse
+import com.example.skilldrill.data.model.RegisterRequest
+import com.example.skilldrill.data.model.RegisterResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,16 +18,26 @@ sealed class AuthState {
     data class Error(val message: String) : AuthState()
 }
 
+sealed class RegisterState {
+    object Idle : RegisterState()
+    object Loading : RegisterState()
+    data class Success(val response: RegisterResponse) : RegisterState()
+    data class Error(val message: String) : RegisterState()
+}
+
 class AuthViewModel : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
+
+    private val _registerState = MutableStateFlow<RegisterState>(RegisterState.Idle)
+    val registerState: StateFlow<RegisterState> = _registerState
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             
             try {
-                val request = LoginRequest(email, password)
+                val request = LoginRequest(email.trim(), password)
                 val response = RetrofitClient.instance.login(request)
                 
                 if (response.isSuccessful && response.body() != null) {
@@ -36,15 +48,43 @@ class AuthViewModel : ViewModel() {
                         _authState.value = AuthState.Error(loginResponse.message)
                     }
                 } else {
-                    _authState.value = AuthState.Error("Login failed: ${response.message()}")
+                    val errorMsg = response.errorBody()?.string() ?: response.message()
+                    _authState.value = AuthState.Error("Login failed: ${response.code()} $errorMsg")
                 }
             } catch (e: Exception) {
                 _authState.value = AuthState.Error("Network error: ${e.localizedMessage}")
             }
         }
     }
+
+    fun register(username: String, email: String, password: String) {
+        viewModelScope.launch {
+            _registerState.value = RegisterState.Loading
+            
+            try {
+                val request = RegisterRequest(username.trim(), email.trim(), password)
+                val response = RetrofitClient.instance.register(request)
+                
+                if (response.isSuccessful && response.body() != null) {
+                    val registerResponse = response.body()!!
+                    if (registerResponse.success) {
+                        _registerState.value = RegisterState.Success(registerResponse)
+                    } else {
+                        _registerState.value = RegisterState.Error(registerResponse.message)
+                    }
+                } else {
+                    val errorMsg = response.errorBody()?.string() ?: response.message()
+                    _registerState.value = RegisterState.Error("Register failed: ${response.code()} $errorMsg")
+                }
+            } catch (e: Exception) {
+                _registerState.value = RegisterState.Error("Network error: ${e.localizedMessage}")
+            }
+        }
+    }
     
     fun resetState() {
         _authState.value = AuthState.Idle
+        _registerState.value = RegisterState.Idle
     }
 }
+

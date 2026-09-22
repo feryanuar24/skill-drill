@@ -18,7 +18,7 @@ fun DashboardScreen(onLogout: () -> Unit) {
     ) {
         Text(text = "Dashboard", fontSize = 24.sp)
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Welcome back, Admin!")
+        Text(text = "Welcome back, Student!")
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onLogout) {
             Text(text = "Logout")

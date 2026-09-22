@@ -10,12 +10,28 @@ data class LoginRequest(
 data class LoginResponse(
     val success: Boolean,
     val message: String,
-    val data: AuthData?
+    val data: LoginData?
 )
 
-data class AuthData(
+data class LoginData(
     val user: User,
     val token: String
+)
+
+data class RegisterRequest(
+    val username: String,
+    val email: String,
+    val password: String
+)
+
+data class RegisterResponse(
+    val success: Boolean,
+    val message: String,
+    val data: RegisterData?
+)
+
+data class RegisterData(
+    val user: User
 )
 
 data class User(

@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.skilldrill.ui.screens.DashboardScreen
 import com.example.skilldrill.ui.screens.HomeScreen
 import com.example.skilldrill.ui.screens.LoginScreen
+import com.example.skilldrill.ui.screens.RegisterScreen
 import com.example.skilldrill.ui.theme.SkillDrillTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +32,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable("home") {
                             HomeScreen(
-                                onNavigateToLogin = { navController.navigate("login") }
+                                onNavigateToLogin = { navController.navigate("login") },
+                                onNavigateToRegister = { navController.navigate("register") }
                             )
                         }
                         composable("login") {
@@ -39,6 +41,16 @@ class MainActivity : ComponentActivity() {
                                 onLoginSuccess = {
                                     navController.navigate("dashboard") {
                                         popUpTo("home") { inclusive = true }
+                                    }
+                                },
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
+                        composable("register") {
+                            RegisterScreen(
+                                onRegisterSuccess = {
+                                    navController.navigate("login") {
+                                        popUpTo("home") { inclusive = false }
                                     }
                                 },
                                 onBack = { navController.popBackStack() }
@@ -59,3 +71,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
