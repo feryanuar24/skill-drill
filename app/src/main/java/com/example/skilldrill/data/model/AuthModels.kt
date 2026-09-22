@@ -39,6 +39,25 @@ data class VerifyEmailResponse(
     val message: String
 )
 
+data class ForgotPasswordRequest(
+    val email: String
+)
+
+data class ForgotPasswordResponse(
+    val success: Boolean,
+    val message: String
+)
+
+data class ResetPasswordRequest(
+    val token: String,
+    val password: String
+)
+
+data class ResetPasswordResponse(
+    val success: Boolean,
+    val message: String
+)
+
 data class User(
     val id: Int,
     val username: String,

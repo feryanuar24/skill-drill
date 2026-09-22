@@ -13,7 +13,9 @@ import androidx.compose.ui.unit.sp
 fun HomeScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
-    onNavigateToVerifyEmail: () -> Unit
+    onNavigateToVerifyEmail: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit,
+    onNavigateToResetPassword: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -32,6 +34,14 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = onNavigateToVerifyEmail) {
             Text(text = "Go to Verify Email")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = onNavigateToForgotPassword) {
+            Text(text = "Go to Forgot Password")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = onNavigateToResetPassword) {
+            Text(text = "Go to Reset Password")
         }
     }
 }

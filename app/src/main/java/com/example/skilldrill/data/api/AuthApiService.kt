@@ -5,6 +5,10 @@ import com.example.skilldrill.data.model.LoginResponse
 import com.example.skilldrill.data.model.RegisterRequest
 import com.example.skilldrill.data.model.RegisterResponse
 import com.example.skilldrill.data.model.VerifyEmailResponse
+import com.example.skilldrill.data.model.ForgotPasswordRequest
+import com.example.skilldrill.data.model.ForgotPasswordResponse
+import com.example.skilldrill.data.model.ResetPasswordRequest
+import com.example.skilldrill.data.model.ResetPasswordResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -20,4 +24,10 @@ interface AuthApiService {
 
     @GET("auth/verify")
     suspend fun verifyEmail(@Query("token") token: String): Response<VerifyEmailResponse>
+
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(@Body request: ForgotPasswordRequest): Response<ForgotPasswordResponse>
+
+    @POST("auth/reset-password")
+    suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<ResetPasswordResponse>
 }

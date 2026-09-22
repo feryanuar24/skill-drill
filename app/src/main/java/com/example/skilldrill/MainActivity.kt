@@ -16,6 +16,8 @@ import com.example.skilldrill.ui.screens.HomeScreen
 import com.example.skilldrill.ui.screens.LoginScreen
 import com.example.skilldrill.ui.screens.RegisterScreen
 import com.example.skilldrill.ui.screens.VerifyEmailScreen
+import com.example.skilldrill.ui.screens.ForgotPasswordScreen
+import com.example.skilldrill.ui.screens.ResetPasswordScreen
 import com.example.skilldrill.ui.theme.SkillDrillTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +37,9 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(
                                 onNavigateToLogin = { navController.navigate("login") },
                                 onNavigateToRegister = { navController.navigate("register") },
-                                onNavigateToVerifyEmail = { navController.navigate("verify_email") }
+                                onNavigateToVerifyEmail = { navController.navigate("verify_email") },
+                                onNavigateToForgotPassword = { navController.navigate("forgot_password") },
+                                onNavigateToResetPassword = { navController.navigate("reset_password") }
                             )
                         }
                         composable("login") {
@@ -63,6 +67,16 @@ class MainActivity : ComponentActivity() {
                                 onBack = { navController.popBackStack() }
                             )
                         }
+                        composable("forgot_password") {
+                            ForgotPasswordScreen(
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
+                        composable("reset_password") {
+                            ResetPasswordScreen(
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
                         composable("dashboard") {
                             DashboardScreen(
                                 onLogout = {
@@ -78,4 +92,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
