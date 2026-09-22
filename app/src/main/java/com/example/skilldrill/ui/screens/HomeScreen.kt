@@ -12,7 +12,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HomeScreen(
     onNavigateToLogin: () -> Unit,
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    onNavigateToVerifyEmail: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -27,6 +28,10 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = onNavigateToRegister) {
             Text(text = "Go to Register")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = onNavigateToVerifyEmail) {
+            Text(text = "Go to Verify Email")
         }
     }
 }

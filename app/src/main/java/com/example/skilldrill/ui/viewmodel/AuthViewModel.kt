@@ -7,6 +7,7 @@ import com.example.skilldrill.data.model.LoginRequest
 import com.example.skilldrill.data.model.LoginResponse
 import com.example.skilldrill.data.model.RegisterRequest
 import com.example.skilldrill.data.model.RegisterResponse
+import com.example.skilldrill.data.model.VerifyEmailResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,12 +27,22 @@ sealed class RegisterState {
     data class Error(val message: String) : RegisterState()
 }
 
+sealed class VerifyEmailState {
+    object Idle : VerifyEmailState()
+    object Loading : VerifyEmailState()
+    data class Success(val response: VerifyEmailResponse) : VerifyEmailState()
+    data class Error(val message: String) : VerifyEmailState()
+}
+
 class AuthViewModel : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
 
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState.Idle)
     val registerState: StateFlow<RegisterState> = _registerState
+
+    private val _verifyEmailState = MutableStateFlow<VerifyEmailState>(VerifyEmailState.Idle)
+    val verifyEmailState: StateFlow<VerifyEmailState> = _verifyEmailState
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
@@ -84,10 +95,36 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
+
+    fun verifyEmail(token: String) {
+        viewModelScope.launch {
+            _verifyEmailState.value = VerifyEmailState.Loading
+            
+            try {
+                val response = RetrofitClient.instance.verifyEmail(token.trim())
+                
+                if (response.isSuccessful && response.body() != null) {
+                    val verifyResponse = response.body()!!
+                    if (verifyResponse.success) {
+                        _verifyEmailState.value = VerifyEmailState.Success(verifyResponse)
+                    } else {
+                        _verifyEmailState.value = VerifyEmailState.Error(verifyResponse.message)
+                    }
+                } else {
+                    val errorJson = response.errorBody()?.string()
+                    val errorMessage = parseErrorMessage(errorJson) ?: response.message()
+                    _verifyEmailState.value = VerifyEmailState.Error(errorMessage)
+                }
+            } catch (e: Exception) {
+                _verifyEmailState.value = VerifyEmailState.Error("Network error: ${e.localizedMessage}")
+            }
+        }
+    }
     
     fun resetState() {
         _authState.value = AuthState.Idle
         _registerState.value = RegisterState.Idle
+        _verifyEmailState.value = VerifyEmailState.Idle
     }
 
     private fun parseErrorMessage(errorJson: String?): String? {

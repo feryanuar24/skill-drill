@@ -34,6 +34,11 @@ data class RegisterData(
     val user: User
 )
 
+data class VerifyEmailResponse(
+    val success: Boolean,
+    val message: String
+)
+
 data class User(
     val id: Int,
     val username: String,

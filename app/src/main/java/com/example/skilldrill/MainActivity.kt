@@ -15,6 +15,7 @@ import com.example.skilldrill.ui.screens.DashboardScreen
 import com.example.skilldrill.ui.screens.HomeScreen
 import com.example.skilldrill.ui.screens.LoginScreen
 import com.example.skilldrill.ui.screens.RegisterScreen
+import com.example.skilldrill.ui.screens.VerifyEmailScreen
 import com.example.skilldrill.ui.theme.SkillDrillTheme
 
 class MainActivity : ComponentActivity() {
@@ -33,7 +34,8 @@ class MainActivity : ComponentActivity() {
                         composable("home") {
                             HomeScreen(
                                 onNavigateToLogin = { navController.navigate("login") },
-                                onNavigateToRegister = { navController.navigate("register") }
+                                onNavigateToRegister = { navController.navigate("register") },
+                                onNavigateToVerifyEmail = { navController.navigate("verify_email") }
                             )
                         }
                         composable("login") {
@@ -53,6 +55,11 @@ class MainActivity : ComponentActivity() {
                                         popUpTo("home") { inclusive = false }
                                     }
                                 },
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
+                        composable("verify_email") {
+                            VerifyEmailScreen(
                                 onBack = { navController.popBackStack() }
                             )
                         }
