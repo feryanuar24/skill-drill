@@ -49,7 +49,9 @@ class MainActivity : ComponentActivity() {
                                         popUpTo("home") { inclusive = true }
                                     }
                                 },
-                                onBack = { navController.popBackStack() }
+                                onBack = { navController.popBackStack() },
+                                onNavigateToRegister = { navController.navigate("register") },
+                                onNavigateToForgotPassword = { navController.navigate("forgot_password") }
                             )
                         }
                         composable("register") {
@@ -59,7 +61,8 @@ class MainActivity : ComponentActivity() {
                                         popUpTo("home") { inclusive = false }
                                     }
                                 },
-                                onBack = { navController.popBackStack() }
+                                onBack = { navController.popBackStack() },
+                                onNavigateToLogin = { navController.navigate("login") }
                             )
                         }
                         composable("verify_email") {
@@ -69,7 +72,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("forgot_password") {
                             ForgotPasswordScreen(
-                                onBack = { navController.popBackStack() }
+                                onBack = { navController.popBackStack() },
+                                onNavigateToLogin = { navController.navigate("login") }
                             )
                         }
                         composable("reset_password") {
