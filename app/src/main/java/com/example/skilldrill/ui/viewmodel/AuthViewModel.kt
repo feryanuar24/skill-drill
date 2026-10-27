@@ -1,8 +1,10 @@
 package com.example.skilldrill.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.skilldrill.data.api.RetrofitClient
+import com.example.skilldrill.data.local.TokenManager
 import com.example.skilldrill.data.model.LoginRequest
 import com.example.skilldrill.data.model.LoginResponse
 import com.example.skilldrill.data.model.RegisterRequest
@@ -52,7 +54,7 @@ sealed class ResetPasswordState {
     data class Error(val message: String) : ResetPasswordState()
 }
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
 
@@ -79,6 +81,9 @@ class AuthViewModel : ViewModel() {
                 if (response.isSuccessful && response.body() != null) {
                     val loginResponse = response.body()!!
                     if (loginResponse.success) {
+                        loginResponse.data?.token?.let { token ->
+                            TokenManager.saveToken(getApplication<Application>().applicationContext, token)
+                        }
                         _authState.value = AuthState.Success(loginResponse)
                     } else {
                         _authState.value = AuthState.Error(loginResponse.message)

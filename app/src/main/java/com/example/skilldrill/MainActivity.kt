@@ -8,16 +8,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.skilldrill.ui.screens.DashboardScreen
+import com.example.skilldrill.ui.screens.ForgotPasswordScreen
 import com.example.skilldrill.ui.screens.HomeScreen
 import com.example.skilldrill.ui.screens.LoginScreen
 import com.example.skilldrill.ui.screens.RegisterScreen
-import com.example.skilldrill.ui.screens.VerifyEmailScreen
-import com.example.skilldrill.ui.screens.ForgotPasswordScreen
 import com.example.skilldrill.ui.screens.ResetPasswordScreen
+import com.example.skilldrill.ui.screens.StudyScreen
+import com.example.skilldrill.ui.screens.VerifyEmailScreen
 import com.example.skilldrill.ui.theme.SkillDrillTheme
 
 class MainActivity : ComponentActivity() {
@@ -87,7 +90,25 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("home") {
                                         popUpTo("dashboard") { inclusive = true }
                                     }
+                                },
+                                onStartStudy = {
+                                    navController.navigate("study")
                                 }
+                            )
+                        }
+                        composable("study") {
+                            StudyScreen(
+                                onBackToDashboard = { navController.popBackStack() }
+                            )
+                        }
+                        composable(
+                            route = "study/{questionId}",
+                            arguments = listOf(navArgument("questionId") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            val questionId = backStackEntry.arguments?.getInt("questionId")
+                            StudyScreen(
+                                questionId = questionId,
+                                onBackToDashboard = { navController.popBackStack() }
                             )
                         }
                     }
@@ -96,5 +117,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-

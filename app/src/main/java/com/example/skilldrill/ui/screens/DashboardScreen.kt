@@ -1,5 +1,6 @@
 package com.example.skilldrill.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,12 +9,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun DashboardScreen(onLogout: () -> Unit) {
+fun DashboardScreen(
+    onLogout: () -> Unit,
+    onStartStudy: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -105,7 +110,8 @@ fun DashboardScreen(onLogout: () -> Unit) {
         DashboardFeatureCard(
             title = "Latihan Soal Interaktif",
             description = "Kerjakan soal-soal latihan sesuai bidang minat Anda.",
-            badgeText = "Mulai"
+            badgeText = "Mulai",
+            onClick = onStartStudy
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -150,10 +156,16 @@ fun DashboardScreen(onLogout: () -> Unit) {
 private fun DashboardFeatureCard(
     title: String,
     description: String,
-    badgeText: String
+    badgeText: String,
+    onClick: (() -> Unit)? = null
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .let { modifier ->
+                if (onClick != null) modifier.clickable(onClick = onClick) else modifier
+            },
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -187,7 +199,10 @@ private fun DashboardFeatureCard(
 
             Surface(
                 shape = RoundedCornerShape(8.dp),
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.let { modifier ->
+                    if (onClick != null) modifier.clickable(onClick = onClick) else modifier
+                }
             ) {
                 Text(
                     text = badgeText,
